@@ -28,15 +28,15 @@ Following are the screenshot of the application:
 
 ### Home/Login Page
 - This is the home page i.e first page.
-![alt text](./client/public/Home-login.png)
+![alt text](./Home-login.png)
 
-![alt text](./client/public/Home-register.png)
-<!-- 
-### Login Page
-![alt text](./client/public/loginPage.png)
-- This is the login page.
+![alt text](./Home-register.png)
 
-### Register Page
+### Dashboard
+![alt text](./Dashboard.png)
+- This is the dashboard.
+
+<!-- ### Register Page
 ![alt text](./client/public/registerPage.png)
 - This is the register page.
 

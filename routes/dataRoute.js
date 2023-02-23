@@ -12,9 +12,22 @@ router.post('/createData', async (req, res) => {
     }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res) => { 
     try {
         const data = await Data.find();
+        res.send(data);
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+});
+    
+router.post('/dataById', async (req, res) => {
+    const dataId=req.body.dataId;
+    try {
+        // console.log("this is findone:" , dataId);
+
+        const data = await Data.findById(dataId);
+        // console.log("data after findById: ", data);
         res.send(data);
     } catch (error) {
         return res.status(400).json({ error });

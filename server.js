@@ -14,5 +14,5 @@ app.use('/data',dataRoute);
 app.get('/',(req,res)=>{
     res.send(`I'm ON...`); 
 })
-
+  
 app.listen(5000);

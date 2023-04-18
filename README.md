@@ -36,6 +36,14 @@ Following are the screenshot of the application:
 ![alt text](./Dashboard.png)
 - This is the dashboard.
 
+### Detail data
+![alt text](./detail-data.png)
+- Every element's detailed information.
+
+### Create Modal
+![alt text](./create-model.png)
+- This is create modal.
+
 <!-- ### Register Page
 ![alt text](./client/public/registerPage.png)
 - This is the register page.

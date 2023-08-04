@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
 router.post('/register', async (req, res) => {
     const newUser = new User({ name: req.body.name, email: req.body.email, password: req.body.password });
     
     try {
+        const token = await newUser.generateAuthToken();
         const result = await newUser.save();
         res.send(result);
     } catch (error) {

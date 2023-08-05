@@ -36,4 +36,26 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ error });
     }
 })
+
+router.get('/find', async (req, res) => {
+    const { email, password } = req.body;
+    
+    try {
+        const result = await User.findOne({ email: email, password: password });
+        if (result) {
+            const temp = {
+                name: result.name,
+                email: result.email, 
+                _id: result._id
+            }
+            res.send(temp);
+        }
+        else {
+            return res.status(200).json({ message: "User not found!!" });
+        }
+
+    } catch (error) {
+        return res.status(400).json({ error });
+    }
+})
 module.exports = router;

@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const data = await Data.find(res?.body);
+    const data = await Data.find(req?.body);
     res.send(data);
   } catch (error) {
     return res.status(400).json({ error });

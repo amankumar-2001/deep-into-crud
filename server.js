@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const dbconfig = require("./db");
+const dbConfig = require("./db");
 const app = express();
 const routes = require("./routes");
 const port = process.env.PORT;
@@ -13,10 +13,6 @@ app.use("/driveDIC", routes);
 
 app.get("/", (req, res) => {
   res.send(`I'm ON...`);
-});
-
-app.get("/", async (req, res) => {
-  res.send(`I'm ON`);
 });
 
 app.listen(port, () => {

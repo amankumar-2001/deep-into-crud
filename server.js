@@ -3,6 +3,7 @@ const cors = require("cors");
 const dbconfig = require("./db");
 const app = express();
 const routes = require("./routes");
+const port = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());
@@ -14,6 +15,10 @@ app.get("/", (req, res) => {
   res.send(`I'm ON...`);
 });
 
-app.listen(5001, () => {
-  console.log("Drive-DIC running on 5001");
+app.get("/", async (req, res) => {
+  res.send(`I'm ON`);
+});
+
+app.listen(port, () => {
+  console.log(`Server is started with nodemon on: ${port}`);
 });

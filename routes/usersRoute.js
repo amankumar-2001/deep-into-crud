@@ -3,17 +3,17 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
-router.post('/register', async (req, res) => {
-    const newUser = new User({ name: req.body.name, email: req.body.email, password: req.body.password });
+// router.post('/register', async (req, res) => {
+//     const newUser = new User({ name: req.body.name, email: req.body.email, password: req.body.password });
     
-    try {
-        const token = await newUser.generateAuthToken();
-        const result = await newUser.save();
-        res.send(result);
-    } catch (error) {
-        return res.status(400).json({ error });
-    }
-})
+//     try {
+//         const token = await newUser.generateAuthToken();
+//         const result = await newUser.save();
+//         res.send(result);
+//     } catch (error) {
+//         return res.status(400).json({ error });
+//     }
+// })
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;

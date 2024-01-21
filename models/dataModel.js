@@ -5,18 +5,19 @@ const dataSchema = new mongoose.Schema(
   {
     userId: {
       type: ObjectId,
-      require: true,
+      required: true,
     },
     typeOfData: {
       type: String,
-      require: true,
+      required: true,
+      enum: ["Blog", "Note", "Image", "File"],
     },
     data: {
       type: String,
     },
     isDeleted: {
       type: Boolean,
-      require: true,
+      required: true,
     },
     avatar: {
       type: String,
@@ -56,6 +57,10 @@ module.exports = {
       },
     ];
     const result = await DataModel.aggregate(pipeline);
-    return result;
+    const response = { Blog: [], Note: [], Image: [], File: [] };
+    for (const item of result) {
+      response[item.typeOfData].push(item);
+    }
+    return response;
   },
 };

@@ -1,7 +1,7 @@
 const userModel = require("../models/userModel");
 
 const addUser = async ({ name, email, password }) => {
-  const user = await getUserByEmailIdAndPassword({ emailId: email, password });
+  const user = await getUserByEmailIdAndPassword({ email, password });
 
   if (user && user?.ok) {
     return { ok: false, data: {}, err: "Email already in use!!" };

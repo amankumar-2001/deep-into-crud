@@ -10,7 +10,13 @@ const { auth } = require("../src/config/firebase.config");
 const dataModel = require("../models/dataModel");
 const { ObjectId } = require("mongodb");
 
-const storeDriveData = async ({ userId, typeOfData, data, file, metaData }) => {
+const storeDriveData = async ({
+  userId,
+  typeOfData,
+  data,
+  file,
+  metaData = {},
+}) => {
   const dateTime = DateTime.now();
   try {
     const insertDict = {
@@ -21,7 +27,11 @@ const storeDriveData = async ({ userId, typeOfData, data, file, metaData }) => {
       isDeleted: false,
     };
 
-    if (typeOfData === "file") {
+    if (
+      typeOfData === "File" ||
+      typeOfData === "Image" ||
+      typeOfData === "Blog"
+    ) {
       const storageFB = getStorage();
       await signInWithEmailAndPassword(
         auth,
@@ -53,6 +63,7 @@ const storeDriveData = async ({ userId, typeOfData, data, file, metaData }) => {
     const response = await dataModel.insert({
       insertDict,
     });
+
     if (!response) {
       return {
         ok: false,
@@ -70,14 +81,12 @@ const editDriveData = async ({ contentId, data, toDelete }) => {
   try {
     const response = await dataModel.updateOne({
       filter: {
-        query: {
-          _id: { $eq: new ObjectId(contentId) },
-        },
+        _id: new ObjectId(contentId),
       },
       update: {
         $set: {
           data,
-          ...(toDelete ? { isDeleted: toDelete } : {}),
+          isDeleted: toDelete || false,
         },
       },
     });

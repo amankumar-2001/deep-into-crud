@@ -5,7 +5,9 @@ module.exports = {
   storeDriveData: async (req, res) => {
     const { userId, typeOfData, data, metaData } = req.body;
     if (!isValidObjectId(userId)) {
-      return res.status(400).json({ message: "Email id is not valid" });
+      return res
+        .status(200)
+        .json({ ok: false, message: "Email id is not valid" });
     }
 
     try {
@@ -17,16 +19,14 @@ module.exports = {
         metaData,
       });
 
-      if (response) {
-        return res.status(200).json({ ok: true, res: response });
+      if (response.ok) {
+        return res.status(200).json({ ok: true, data: response.data });
       }
 
-      return res
-        .status(500)
-        .json({ ok: false, message: "Internal server error" });
+      return res.status(200).json({ ok: false, message: response.err });
     } catch (e) {
       return res
-        .status(500)
+        .status(200)
         .json({ ok: false, message: "Internal server error" });
     }
   },
@@ -34,9 +34,11 @@ module.exports = {
     const { userId, contentId, typeOfData, data, toDelete } = req.body;
 
     if (!isValidObjectId(userId)) {
-      return res.status(400).json({ message: "Email id is not valid" });
+      return res
+        .status(200)
+        .json({ ok: false, message: "Email id is not valid" });
     }
-    
+
     try {
       const response = await dataService.editDriveData({
         contentId,
@@ -45,38 +47,34 @@ module.exports = {
         toDelete,
       });
 
-      if (response) {
-        return res.status(200).json({ ok: true, res: response });
+      if (response.ok) {
+        return res.status(200).json({ ok: true, data: response.data });
       }
 
-      return res
-        .status(500)
-        .json({ ok: false, message: "Internal server error1" });
+      return res.status(200).json({ ok: false, message: response.err });
     } catch (e) {
       return res
-        .status(500)
+        .status(200)
         .json({ ok: false, message: "Internal server error" });
     }
   },
   getDriveData: async (req, res) => {
     const { userId, typeOfData } = req.query;
     if (!isValidObjectId(userId)) {
-      return res.status(400).json({ message: "Not a valid user." });
+      return res.status(200).json({ ok: false, message: "Not a valid user." });
     }
     try {
       const response = await dataService.getDriveDataByUser({
         userId,
         typeOfData,
       });
-      if (response) {
-        return res.status(200).json({ ok: true, res: response });
+      if (response.ok) {
+        return res.status(200).json({ ok: true, data: response.data });
       }
-      return res
-        .status(500)
-        .json({ ok: false, message: "Internal server error" });
+      return res.status(200).json({ ok: false, message: response.err });
     } catch (e) {
       return res
-        .status(500)
+        .status(200)
         .json({ ok: false, message: "Internal server error" });
     }
   },

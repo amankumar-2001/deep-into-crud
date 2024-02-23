@@ -57,9 +57,13 @@ module.exports = {
       },
     ];
     const result = await DataModel.aggregate(pipeline);
-    const response = { Blog: [], Note: [], Image: [], File: [] };
+    const response = {
+      items: { Blog: [], Note: [], Image: [], File: [] },
+      totalLength: 0,
+    };
     for (const item of result) {
-      response[item.typeOfData].push(item);
+      response.items[item.typeOfData].push(item);
+      response.totalLength += 1;
     }
     return response;
   },

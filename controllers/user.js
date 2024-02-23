@@ -47,7 +47,10 @@ module.exports = {
       if (response.ok) {
         return res
           .status(200)
-          .cookie("token", response.data.token)
+          .cookie("token", response.data.token, {
+            sameSite: "None",
+            secure: true,
+          })
           .json({
             ok: true,
             data: {

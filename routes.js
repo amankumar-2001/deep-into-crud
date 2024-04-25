@@ -10,6 +10,13 @@ router.post("/register/user", user.addUser);
 router.post("/login/user", user.login);
 
 router.post(
+  "/edit/profile",
+  authenticateUser,
+  upload.single("file"),
+  user.editProfile
+);
+
+router.post(
   "/add/data",
   authenticateUser,
   upload.single("file"),

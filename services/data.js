@@ -32,6 +32,12 @@ const storeDriveData = async ({
     typeOfData === "Image" ||
     typeOfData === "Blog"
   ) {
+    if (!Object.keys(file).length) {
+      return {
+        ok: false,
+        err: "No file selected...",
+      };
+    }
     const storageFB = getStorage();
     await signInWithEmailAndPassword(
       auth,

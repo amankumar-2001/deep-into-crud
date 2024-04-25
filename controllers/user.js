@@ -54,11 +54,54 @@ module.exports = {
           .json({
             ok: true,
             data: {
-              name: response.data.name,
+              firstName: response.data.firstName,
+              lastName: response.data.lastName,
               email: response.data.email,
               userId: response.data.userId,
+              profileImage: response.data.profileImage,
             },
           });
+      }
+
+      return res.status(200).json({ ok: false, message: response.err });
+    } catch (e) {
+      return res
+        .status(200)
+        .json({ ok: false, message: "Internal server error" });
+    }
+  },
+
+  editProfile: async (req, res) => {
+    const {
+      userId,
+      firstName,
+      lastName,
+      prevEmail,
+      email,
+      password,
+      prevPassword,
+    } = req.body;
+
+    if (!isValidEmail(email)) {
+      return res
+        .status(200)
+        .json({ ok: false, message: "Email id is not valid" });
+    }
+
+    try {
+      const response = await userService.editProfile({
+        userId,
+        firstName,
+        lastName,
+        email,
+        password,
+        prevEmail,
+        profileImage: req?.file || "",
+        prevPassword,
+      });
+
+      if (response.ok) {
+        return res.status(200).json({ ok: true, data: response.data });
       }
 
       return res.status(200).json({ ok: false, message: response.err });

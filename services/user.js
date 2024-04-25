@@ -2,6 +2,16 @@ const userModel = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const { ObjectId } = require("mongodb");
+const {
+  getStorage,
+  uploadBytesResumable,
+  getDownloadURL,
+  ref,
+} = require("firebase/storage");
+const { signInWithEmailAndPassword } = require("firebase/auth");
+const { auth } = require("../src/config/firebase.config");
+const { DateTime } = require("luxon");
 dotenv.config();
 
 const addUser = async ({ name, email, password }) => {
@@ -13,7 +23,7 @@ const addUser = async ({ name, email, password }) => {
   const encrypt = await bcrypt.hash(password, 10);
 
   const response = await userModel.insert({
-    insertDict: { name, email, password: encrypt },
+    insertDict: { firstName: name, email, password: encrypt },
   });
 
   if (!response) {
@@ -26,7 +36,7 @@ const addUser = async ({ name, email, password }) => {
   return {
     ok: true,
     data: {
-      name: response.name,
+      name: response.firstName,
       email: response.email,
       userId: response._id,
     },
@@ -67,9 +77,102 @@ const getUserByEmailIdAndPassword = async ({ email, password }) => {
     ok: true,
     data: {
       token,
-      name: response.name,
+      firstName: response?.firstName,
+      lastName: response?.lastName,
       email: response.email,
       userId: response._id,
+      profileImage: response?.profileImage || "",
+    },
+  };
+};
+
+const editProfile = async ({
+  userId,
+  firstName,
+  lastName,
+  email,
+  prevEmail,
+  password,
+  prevPassword,
+  profileImage,
+}) => {
+  const user = await userModel.findOne({ query: { email: prevEmail } });
+
+  const authenticate = bcrypt.compareSync(prevPassword, user.password);
+
+  if (!authenticate) {
+    return { ok: false, err: "Wrong Password!!" };
+  }
+
+  let encrypt = null;
+  if (password) {
+    encrypt = await bcrypt.hash(password, 10);
+  }
+
+  let imageUrl = "";
+  if (profileImage) {
+    const storageFB = getStorage();
+    await signInWithEmailAndPassword(
+      auth,
+      process.env.FIREBASE_USER,
+      process.env.FIREBASE_AUTH
+    );
+
+    const dateTime = DateTime.now();
+
+    const storageRef = ref(
+      storageFB,
+      `${userId}/${dateTime + profileImage.originalname}`
+    );
+    const snapshot = await uploadBytesResumable(
+      storageRef,
+      profileImage.buffer,
+      {
+        contentType: profileImage.mimetype,
+      }
+    );
+
+    if (!snapshot) {
+      return {
+        ok: false,
+        err: "Something went wrong!! we are looking into it...",
+      };
+    }
+    imageUrl = await getDownloadURL(snapshot.ref);
+  }
+
+  const response = await userModel.updateOne({
+    filter: {
+      _id: new ObjectId(userId),
+    },
+    update: {
+      $set: {
+        firstName,
+        lastName,
+        email,
+        ...(password ? { password: encrypt } : {}),
+        ...(profileImage ? { profileImage: imageUrl } : {}),
+      },
+    },
+  });
+
+  if (!response) {
+    return {
+      ok: false,
+      err: "Something went wrong!! we are looking into it...",
+    };
+  }
+
+  const updatedUser = await userModel.findOne({ query: { email } });
+
+  return {
+    ok: true,
+    data: {
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      email: updatedUser.email,
+      userId,
+      profileImage: updatedUser.profileImage,
     },
   };
 };
@@ -77,4 +180,5 @@ const getUserByEmailIdAndPassword = async ({ email, password }) => {
 module.exports = {
   addUser,
   getUserByEmailIdAndPassword,
+  editProfile,
 };

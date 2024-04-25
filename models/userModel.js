@@ -2,9 +2,15 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       required: true,
+    },
+    lastName: {
+      type: String,
+    },
+    profileImage: {
+      type: String,
     },
     email: {
       type: String,
@@ -25,4 +31,6 @@ const UserModel = mongoose.model("users", userSchema, "users");
 module.exports = {
   insert: ({ insertDict }) => UserModel(insertDict).save(),
   findOne: ({ query }) => UserModel.findOne(query),
+  updateOne: ({ filter, update, options = {} }) =>
+    UserModel.updateOne(filter, update, options),
 };

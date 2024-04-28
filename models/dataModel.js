@@ -36,12 +36,12 @@ module.exports = {
   updateOne: ({ filter, update, options = {} }) =>
     DataModel.updateOne(filter, update, options),
   find: ({ query }) => DataModel.find(query),
-  findByUserId: async ({ query }) => {
+  findByUserId: async ({ query, isDeleted = false, groupBy }) => {
     const pipeline = [
       {
         $match: {
           userId: new ObjectId(query.userId),
-          isDeleted: false,
+          isDeleted,
           ...(query.typeOfData ? { typeOfData: query.typeOfData } : {}),
         },
       },
@@ -53,9 +53,36 @@ module.exports = {
           data: 1,
           metaData: 1,
           contentId: "$_id",
+          updatedAt: 1,
         },
       },
     ];
+
+    if (groupBy === "date") {
+      pipeline.push({
+        $group: {
+          _id: "$updatedAt",
+          item: {
+            $push: {
+              userId: "$userId",
+              typeOfData: "$typeOfData",
+              data: "$data",
+              metaData: "$metaData",
+              contentId: "$contentId",
+            },
+          },
+        },
+      });
+      pipeline.push({
+        $project: {
+          _id: 0,
+          deletedDate: "$_id",
+          item: 1,
+        },
+      });
+
+      return await DataModel.aggregate(pipeline);
+    }
     const result = await DataModel.aggregate(pipeline);
     const response = {
       items: { Blog: [], Note: [], Image: [], File: [] },

@@ -27,4 +27,6 @@ router.post("/edit/data", authenticateUser, drive.editDriveData);
 
 router.get("/drive/data/byUserId", authenticateUser, drive.getDriveData);
 
+router.get("/bin/data", authenticateUser, drive.getBinData);
+
 module.exports = router;

@@ -67,6 +67,28 @@ module.exports = {
       const response = await dataService.getDriveDataByUser({
         userId,
         typeOfData,
+        isDeleted: false,
+      });
+      if (response.ok) {
+        return res.status(200).json({ ok: true, data: response.data });
+      }
+      return res.status(200).json({ ok: false, message: response.err });
+    } catch (e) {
+      return res
+        .status(200)
+        .json({ ok: false, message: "Internal server error" });
+    }
+  },
+  getBinData: async (req, res) => {
+    const { userId } = req.query;
+    if (!isValidObjectId(userId)) {
+      return res.status(200).json({ ok: false, message: "Not a valid user." });
+    }
+    try {
+      const response = await dataService.getDriveDataByUser({
+        userId,
+        isDeleted: true,
+        groupBy: "date",
       });
       if (response.ok) {
         return res.status(200).json({ ok: true, data: response.data });

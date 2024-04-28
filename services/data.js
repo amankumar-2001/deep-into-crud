@@ -100,9 +100,16 @@ const editDriveData = async ({ contentId, data, toDelete }) => {
   return { ok: true, data: response };
 };
 
-const getDriveDataByUser = async ({ userId, typeOfData }) => {
+const getDriveDataByUser = async ({
+  userId,
+  typeOfData,
+  isDeleted = false,
+  groupBy = "type",
+}) => {
   const response = await dataModel.findByUserId({
     query: { userId, typeOfData },
+    isDeleted,
+    groupBy,
   });
 
   if (!response) {

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const user = require("./controllers/user");
 const drive = require("./controllers/data");
+const contactUs = require("./controllers/contactUs");
 const { upload } = require("./utils/commonFunctions");
 const { authenticateUser } = require("./middlewares");
 
@@ -28,5 +29,7 @@ router.post("/edit/data", authenticateUser, drive.editDriveData);
 router.get("/drive/data/byUserId", authenticateUser, drive.getDriveData);
 
 router.get("/bin/data", authenticateUser, drive.getBinData);
+
+router.post("/contact-us/message", contactUs.sentMailToOrganizer);
 
 module.exports = router;

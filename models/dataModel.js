@@ -132,6 +132,11 @@ module.exports = {
         },
       },
       {
+        $sort: {
+          updatedAt: -1,
+        },
+      },
+      {
         $project: {
           _id: 0,
           userId: 1,
@@ -150,7 +155,7 @@ module.exports = {
         $limit: parseInt(query.limit),
       });
     }
-
+    console.log({ pipeline: JSON.stringify(pipeline) });
     return await DataModel.aggregate(pipeline);
   },
 };

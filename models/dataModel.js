@@ -59,39 +59,54 @@ module.exports = {
     ];
 
     if (groupBy === "date") {
-      pipeline.push({
-        $group: {
-          _id: "$updatedAt",
-          item: {
-            $push: {
-              userId: "$userId",
-              typeOfData: "$typeOfData",
-              data: "$data",
-              metaData: "$metaData",
-              contentId: "$contentId",
+      pipeline.push(
+        {
+          $addFields: {
+            formattedDate: {
+              $dateToString: {
+                format: "%Y-%m-%d",
+                date: "$updatedAt",
+              },
             },
           },
         },
-      });
-      pipeline.push({
-        $project: {
-          _id: 0,
-          deletedDate: "$_id",
-          item: 1,
+        {
+          $group: {
+            _id: "$formattedDate",
+            items: {
+              $push: {
+                userId: "$userId",
+                typeOfData: "$typeOfData",
+                data: "$data",
+                metaData: "$metaData",
+                contentId: "$contentId",
+              },
+            },
+          },
         },
-      });
+        {
+          $project: {
+            _id: 0,
+            deletedDate: "$_id",
+            items: 1,
+          },
+        }
+      );
 
       return await DataModel.aggregate(pipeline);
     }
+
     const result = await DataModel.aggregate(pipeline);
     const response = {
       items: { Blog: [], Note: [], Image: [], File: [] },
       totalLength: 0,
     };
+
     for (const item of result) {
       response.items[item.typeOfData].push(item);
       response.totalLength += 1;
     }
+
     return response;
   },
 };

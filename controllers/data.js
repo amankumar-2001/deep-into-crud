@@ -79,6 +79,24 @@ module.exports = {
         .json({ ok: false, message: "Internal server error" });
     }
   },
+  getExploreData: async (req, res) => {
+    const { limit } = req.query;
+    
+    try {
+      const response = await dataService.getExploreData({
+        limit,
+        isDeleted: false,
+      });
+      if (response.ok) {
+        return res.status(200).json({ ok: true, data: response.data });
+      }
+      return res.status(200).json({ ok: false, message: response.err });
+    } catch (e) {
+      return res
+        .status(200)
+        .json({ ok: false, message: "Internal server error" });
+    }
+  },
   getBinData: async (req, res) => {
     const { userId } = req.query;
     if (!isValidObjectId(userId)) {

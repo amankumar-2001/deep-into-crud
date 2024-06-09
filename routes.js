@@ -28,6 +28,8 @@ router.post("/edit/data", authenticateUser, drive.editDriveData);
 
 router.get("/drive/data/byUserId", authenticateUser, drive.getDriveData);
 
+router.get("/drive/explore", authenticateUser, drive.getExploreData);
+
 router.get("/bin/data", authenticateUser, drive.getBinData);
 
 router.post("/contact-us/message", contactUs.sentMailToOrganizer);

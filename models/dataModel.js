@@ -109,4 +109,48 @@ module.exports = {
 
     return response;
   },
+  findByTypeOfData: async ({ query, isDeleted = false }) => {
+    const pipeline = [
+      {
+        $match: {
+          typeOfData: query.typeOfData,
+          isDeleted,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "userInfo",
+        },
+      },
+      {
+        $unwind: {
+          path: "$userInfo",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          userId: 1,
+          typeOfData: 1,
+          data: 1,
+          metaData: 1,
+          contentId: "$_id",
+          userInfo: 1,
+          updatedAt: 1,
+        },
+      },
+    ];
+
+    if (query?.limit) {
+      pipeline.push({
+        $limit: parseInt(query.limit),
+      });
+    }
+
+    return await DataModel.aggregate(pipeline);
+  },
 };

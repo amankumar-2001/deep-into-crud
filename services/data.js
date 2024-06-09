@@ -122,8 +122,25 @@ const getDriveDataByUser = async ({
   return { ok: true, data: response };
 };
 
+const getExploreData = async ({ limit, isDeleted }) => {
+  const response = await dataModel.findByTypeOfData({
+    query: { typeOfData: "Blog", limit },
+    isDeleted,
+  });
+
+  if (!response) {
+    return {
+      ok: false,
+      err: "Something went wrong!! we are looking into it...",
+    };
+  }
+
+  return { ok: true, data: response };
+};
+
 module.exports = {
   storeDriveData,
   getDriveDataByUser,
   editDriveData,
+  getExploreData,
 };
